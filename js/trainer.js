@@ -1321,7 +1321,7 @@ class NPC {
         }
         
         this.attack_cycle += this.attack_speed;
-        if (this.crab_special_eligible && Math.random() < .25) {
+        if (this.crab_special_eligible && Math.random() < .5) {
             this.crabAttack();
             return;
         }
