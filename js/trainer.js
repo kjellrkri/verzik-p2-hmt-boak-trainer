@@ -69,7 +69,10 @@ const nylocas_special_spawns = [
     {key: "toxobolos", x: board_width - 1, y: board_height / 2, size: 2}
 ];
 const tilepacks = [
-    // Add shared tilepacks here as {name: "Tilepack name", text: `formatted tilepack text`}.
+    {
+        name: "P2 reg BOAK",
+        text: `[{"regionId":12611,"regionX":35,"regionY":26,"z":0,"color":"#FF960000","label":"1"},{"regionId":12611,"regionX":32,"regionY":22,"z":0,"color":"#FF960000","label":"4"},{"regionId":12611,"regionX":34,"regionY":23,"z":0,"color":"#FF960000","label":"3"},{"regionId":12611,"regionX":36,"regionY":25,"z":0,"color":"#FF960000","label":"2,5"},{"regionId":12611,"regionX":31,"regionY":29,"z":0,"color":"#FFFF0000","label":"1"},{"regionId":12611,"regionX":29,"regionY":26,"z":0,"color":"#FFFF0000","label":"2"},{"regionId":12611,"regionX":28,"regionY":27,"z":0,"color":"#FFFF0000","label":"3"},{"regionId":12611,"regionX":30,"regionY":29,"z":0,"color":"#FFFF0000","label":"4"},{"regionId":12611,"regionX":28,"regionY":31,"z":0,"color":"#FFFF0000","label":"5"}]`
+    }
 ];
 
 const tile_marker_json = '{"none":[],"1":[[7,2],[4,5],[10,5],[7,8]],"2":[[6,2],[8,2],[4,4],[4,6],[10,4],[10,6],[6,8],[8,8]],"3":[[5,2],[6,2],[7,2],[8,2],[9,2],[4,3],[4,4],[4,5],[4,6],[4,7],[10,3],[10,4],[10,5],[10,6],[10,7],[5,8],[6,8],[7,8],[8,8],[9,8]]}';
