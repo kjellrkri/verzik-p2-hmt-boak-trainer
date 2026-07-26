@@ -90,6 +90,16 @@ const tilepacks = [
         text: `[{"regionId":12611,"regionX":36,"regionY":26,"z":0,"color":"#0000FFAD","label":"DT"},{"regionId":12611,"regionX":36,"regionY":24,"z":0,"color":"#0000FFAD","label":"     1"},{"regionId":12611,"regionX":34,"regionY":23,"z":0,"color":"#0000FFAD","label":"     2"},{"regionId":12611,"regionX":35,"regionY":22,"z":0,"color":"#0000FFAD","label":"3"},{"regionId":12611,"regionX":32,"regionY":22,"z":0,"color":"#0000FFAD","label":"      4"},{"regionId":12611,"regionX":30,"regionY":18,"z":0,"color":"#0000FFAD","label":"5"}]`
     }
 ];
+const tilepack_categories = [
+    {
+        title: "regular TOB tile packs",
+        matches: pack => pack.name.toLowerCase().includes("reg")
+    },
+    {
+        title: "HMT tile packs",
+        matches: pack => pack.name.toLowerCase().includes("hmt")
+    }
+];
 
 const tile_marker_json = '{"none":[],"1":[[7,2],[4,5],[10,5],[7,8]],"2":[[6,2],[8,2],[4,4],[4,6],[10,4],[10,6],[6,8],[8,8]],"3":[[5,2],[6,2],[7,2],[8,2],[9,2],[4,3],[4,4],[4,5],[4,6],[4,7],[10,3],[10,4],[10,5],[10,6],[10,7],[5,8],[6,8],[7,8],[8,8],[9,8]]}';
 const tile_marker_arr = JSON.parse(tile_marker_json);
@@ -401,18 +411,59 @@ async function copyTilepackToClipboard(pack) {
     }
 }
 
+function createTilepackButton(pack) {
+    let button = document.createElement("button");
+    button.type = "button";
+    button.textContent = pack.name;
+    button.setAttribute("aria-label", `Copy ${pack.name} tilepack`);
+    button.addEventListener("click", () => copyTilepackToClipboard(pack));
+    return button;
+}
+
 function initializeTilepacks() {
     let container = $("tilepack-buttons");
     if (!container) return;
 
     container.replaceChildren();
-    for (let pack of tilepacks) {
-        let button = document.createElement("button");
-        button.type = "button";
-        button.textContent = pack.name;
-        button.setAttribute("aria-label", `Copy ${pack.name} tilepack`);
-        button.addEventListener("click", () => copyTilepackToClipboard(pack));
-        container.appendChild(button);
+    let assigned_packs = new Set();
+
+    for (let category of tilepack_categories) {
+        let category_packs = tilepacks.filter(pack => category.matches(pack));
+        if (category_packs.length === 0) continue;
+
+        let group = document.createElement("section");
+        group.className = "tilepack-group";
+
+        let heading = document.createElement("h4");
+        heading.textContent = category.title;
+        group.appendChild(heading);
+
+        let button_row = document.createElement("div");
+        button_row.className = "tilepack-button-row";
+        for (let pack of category_packs) {
+            assigned_packs.add(pack);
+            button_row.appendChild(createTilepackButton(pack));
+        }
+        group.appendChild(button_row);
+        container.appendChild(group);
+    }
+
+    let uncategorized_packs = tilepacks.filter(pack => !assigned_packs.has(pack));
+    if (uncategorized_packs.length > 0) {
+        let group = document.createElement("section");
+        group.className = "tilepack-group";
+
+        let heading = document.createElement("h4");
+        heading.textContent = "Other tile packs";
+        group.appendChild(heading);
+
+        let button_row = document.createElement("div");
+        button_row.className = "tilepack-button-row";
+        for (let pack of uncategorized_packs) {
+            button_row.appendChild(createTilepackButton(pack));
+        }
+        group.appendChild(button_row);
+        container.appendChild(group);
     }
 
     setTilepackStatus("");

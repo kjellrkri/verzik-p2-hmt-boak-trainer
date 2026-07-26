@@ -258,16 +258,35 @@ input[type="range"] {
 }
 
 .tilepack-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+    gap: 14px;
 }
 
 .tilepack-buttons:empty {
     display: none;
 }
 
-.tilepack-buttons button {
+.tilepack-group {
+    display: grid;
+    gap: 8px;
+}
+
+.tilepack-group h4 {
+    margin: 0;
+    color: #d8d0c8;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.tilepack-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tilepack-button-row button {
     min-width: 150px;
 }
 
