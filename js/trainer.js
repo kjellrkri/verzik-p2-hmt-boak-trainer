@@ -68,6 +68,9 @@ const nylocas_special_spawns = [
     {key: "ischyros", x: 1, y: board_height / 2, size: 2},
     {key: "toxobolos", x: board_width - 1, y: board_height / 2, size: 2}
 ];
+const tilepacks = [
+    // Add shared tilepacks here as {name: "Tilepack name", text: `formatted tilepack text`}.
+];
 
 const tile_marker_json = '{"none":[],"1":[[7,2],[4,5],[10,5],[7,8]],"2":[[6,2],[8,2],[4,4],[4,6],[10,4],[10,6],[6,8],[8,8]],"3":[[5,2],[6,2],[7,2],[8,2],[9,2],[4,3],[4,4],[4,5],[4,6],[4,7],[10,3],[10,4],[10,5],[10,6],[10,7],[5,8],[6,8],[7,8],[8,8],[9,8]]}';
 const tile_marker_arr = JSON.parse(tile_marker_json);
@@ -342,6 +345,58 @@ function loadAcidHitSplatFont() {
         console.warn("Could not load acid hitsplat font.", error);
         acid_hitsplat_font_ready = true;
     });
+}
+
+function setTilepackStatus(message, is_error = false) {
+    let status = $("tilepack-status");
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("error", is_error);
+}
+
+function fallbackCopyText(text) {
+    let textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    textarea.style.top = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    let copied = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    if (!copied) throw new Error("Copy command was blocked.");
+}
+
+async function copyTilepackToClipboard(pack) {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(pack.text);
+        } else {
+            fallbackCopyText(pack.text);
+        }
+        setTilepackStatus(`${pack.name} copied to clipboard.`);
+    } catch (error) {
+        console.warn("Could not copy tilepack.", error);
+        setTilepackStatus("Clipboard access was blocked. Click the button again or check browser permissions.", true);
+    }
+}
+
+function initializeTilepacks() {
+    let container = $("tilepack-buttons");
+    if (!container) return;
+
+    container.replaceChildren();
+    for (let pack of tilepacks) {
+        let button = document.createElement("button");
+        button.type = "button";
+        button.textContent = pack.name;
+        button.setAttribute("aria-label", `Copy ${pack.name} tilepack`);
+        button.addEventListener("click", () => copyTilepackToClipboard(pack));
+        container.appendChild(button);
+    }
+
+    setTilepackStatus("");
 }
 
 function getCustomTileMarkerKey(x, y) {
@@ -2854,6 +2909,7 @@ function preloadAudio(obj_src, obj_sound, prefix, ext) {
 
 function bootTrainer() {
     initializeAudioUnlockHandlers();
+    initializeTilepacks();
     init();
     resize();
     window.addEventListener("load", resize, {once: true});

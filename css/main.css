@@ -238,6 +238,49 @@ input[type="range"] {
     background: #000;
 }
 
+.tilepacks-section {
+    width: min(100%, 1240px);
+    margin: 16px auto 0;
+}
+
+.tilepacks-card {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #1b1917, #121110);
+    box-shadow: var(--shadow);
+}
+
+.tilepacks-card h3 {
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: 18px;
+}
+
+.tilepack-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tilepack-buttons:empty {
+    display: none;
+}
+
+.tilepack-buttons button {
+    min-width: 150px;
+}
+
+.tilepack-status {
+    min-height: 1.2em;
+    margin: 8px 0 0;
+    color: #d8d0c8;
+}
+
+.tilepack-status.error {
+    color: #ff9a8f;
+}
+
 .form-box {
     order: 3;
     width: min(390px, calc(100vw - 28px));
