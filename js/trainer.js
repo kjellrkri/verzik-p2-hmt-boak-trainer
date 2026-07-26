@@ -82,6 +82,10 @@ const tilepacks = [
         text: `[{"regionId":12611,"regionX":31,"regionY":30,"z":0,"color":"#0000DDFF","label":"NB"},{"regionId":12611,"regionX":28,"regionY":27,"z":0,"color":"#0000DDFF","label":"      1"},{"regionId":12611,"regionX":32,"regionY":30,"z":0,"color":"#0000DDFF","label":"     2"},{"regionId":12611,"regionX":28,"regionY":30,"z":0,"color":"#0000DDFF","label":"3"}]`
     },
     {
+        name: "P3 HMT North Tank BOAK",
+        text: `[{"regionId":12611,"regionX":30,"regionY":28,"z":0,"color":"#FFFF7D00"},{"regionId":12611,"regionX":32,"regionY":30,"z":0,"color":"#FFFF7D00"},{"regionId":12611,"regionX":30,"regionY":30,"z":0,"color":"#FFFF7D00","label":"NT"}]`
+    },
+    {
         name: "P3 reg Duck Tank",
         text: `[{"regionId":12611,"regionX":36,"regionY":26,"z":0,"color":"#0000FFAD","label":"DT"},{"regionId":12611,"regionX":36,"regionY":24,"z":0,"color":"#0000FFAD","label":"     1"},{"regionId":12611,"regionX":34,"regionY":23,"z":0,"color":"#0000FFAD","label":"     2"},{"regionId":12611,"regionX":35,"regionY":22,"z":0,"color":"#0000FFAD","label":"3"},{"regionId":12611,"regionX":32,"regionY":22,"z":0,"color":"#0000FFAD","label":"      4"},{"regionId":12611,"regionX":30,"regionY":18,"z":0,"color":"#0000FFAD","label":"5"}]`
     }
