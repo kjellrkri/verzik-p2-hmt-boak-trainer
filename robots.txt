@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kjellrkri.github.io/verzik-p2-hmt-boak-trainer/sitemap.xml

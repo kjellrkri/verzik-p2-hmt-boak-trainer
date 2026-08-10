@@ -60,6 +60,16 @@ p {
     margin-top: 0;
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 button,
 input,
 select,
@@ -298,6 +308,28 @@ input[type="range"] {
 
 .tilepack-status.error {
     color: #ff9a8f;
+}
+
+.seo-summary {
+    width: min(100%, 1240px);
+    margin: 14px auto 0;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #161412, #0f0e0d);
+    box-shadow: var(--shadow);
+}
+
+.seo-summary h2 {
+    margin: 0 0 6px;
+    color: var(--text);
+    font-size: 18px;
+}
+
+.seo-summary p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
 }
 
 .form-box {
