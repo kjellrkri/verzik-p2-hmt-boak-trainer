@@ -189,7 +189,7 @@ var unlimited_player_hp_enabled = localStorage.getItem(unlimited_player_hp_stora
 var unlimited_verzik_hp_enabled = localStorage.getItem(unlimited_verzik_hp_storage_key) === "true";
 const hmt_acid_pools_storage_key = "verzik-hmt-acid-pools-v1";
 const saved_hmt_acid_pools = localStorage.getItem(hmt_acid_pools_storage_key);
-var hmt_acid_pools_enabled = saved_hmt_acid_pools === null ? true : saved_hmt_acid_pools === "true";
+var hmt_acid_pools_enabled = saved_hmt_acid_pools === null ? false : saved_hmt_acid_pools === "true";
 const true_tile_enabled_storage_key = "verzik-show-true-tile-v1";
 const true_tile_color_storage_key = "verzik-true-tile-color-v1";
 const saved_true_tile_enabled = localStorage.getItem(true_tile_enabled_storage_key);
@@ -304,7 +304,7 @@ const reg_tob_boak_tile_markers = {
 const saved_ground_marker_preset = localStorage.getItem(ground_marker_preset_storage_key);
 var ground_marker_preset = ["none", "hmt-boak", "reg-tob-boak", "custom"].includes(saved_ground_marker_preset)
     ? saved_ground_marker_preset
-    : "hmt-boak";
+    : "reg-tob-boak";
 var custom_tile_markers = loadCustomTileMarkers();
 var context_menu_tile = null;
 const last_used_color_storage_key = "verzik-last-used-color-v1";
@@ -316,6 +316,20 @@ var last_used_color = localStorage.getItem(last_used_color_storage_key) || "#fff
 var active_color_input = null;
 var active_color_previous = null;
 var marker_json_mode = "export";
+const practice_modes = {
+    regular: {
+        button_id: "mode-regular-tob",
+        acid_pools_enabled: false,
+        ground_marker_preset: "reg-tob-boak",
+        markers: () => cloneTileMarkers(reg_tob_boak_tile_markers)
+    },
+    hmt: {
+        button_id: "mode-hard-mode-tob",
+        acid_pools_enabled: true,
+        ground_marker_preset: "hmt-boak",
+        markers: () => cloneTileMarkers(hmt_boak_tile_markers)
+    }
+};
 
 
 /// variables that are reset with reset();
@@ -485,13 +499,13 @@ function loadCustomTileMarkers() {
             return {};
         }
 
-        let defaults = cloneTileMarkers(hmt_boak_tile_markers);
+        let defaults = cloneTileMarkers(reg_tob_boak_tile_markers);
         localStorage.setItem(custom_tile_marker_storage_key, JSON.stringify(defaults));
         localStorage.setItem(custom_tile_marker_initialized_key, "true");
         return defaults;
     } catch (error) {
         console.warn("Could not load custom tile markers.", error);
-        return cloneTileMarkers(hmt_boak_tile_markers);
+        return cloneTileMarkers(reg_tob_boak_tile_markers);
     }
 }
 
@@ -509,11 +523,69 @@ function saveCustomTileMarkers() {
     markStaticLayerDirty();
 }
 
+function getActivePracticeModeKey() {
+    for (let mode_key of Object.keys(practice_modes)) {
+        let mode = practice_modes[mode_key];
+        if (
+            hmt_acid_pools_enabled === mode.acid_pools_enabled
+            && ground_marker_preset === mode.ground_marker_preset
+        ) {
+            return mode_key;
+        }
+    }
+    return null;
+}
+
+function updatePracticeModeButtons() {
+    let active_mode_key = getActivePracticeModeKey();
+    for (let mode_key of Object.keys(practice_modes)) {
+        let button = $(practice_modes[mode_key].button_id);
+        if (!button) continue;
+        let is_active = active_mode_key === mode_key;
+        button.classList.toggle("active", is_active);
+        button.setAttribute("aria-pressed", String(is_active));
+    }
+}
+
+function setHmtAcidPoolsEnabled(enabled) {
+    hmt_acid_pools_enabled = Boolean(enabled);
+    localStorage.setItem(hmt_acid_pools_storage_key, hmt_acid_pools_enabled);
+    let checkbox = $("hmt-acid-pools-enabled");
+    if (checkbox) checkbox.checked = hmt_acid_pools_enabled;
+    if (!hmt_acid_pools_enabled) poison_pools = [];
+    updatePracticeModeButtons();
+}
+
+function applyPracticeMode(mode_key) {
+    let mode = practice_modes[mode_key];
+    if (!mode) return;
+
+    setHmtAcidPoolsEnabled(mode.acid_pools_enabled);
+    setGroundMarkerPreset(mode.ground_marker_preset);
+    custom_tile_markers = mode.markers();
+    saveCustomTileMarkers();
+    hideTileContextMenu();
+    updatePracticeModeButtons();
+    draw();
+    canvas.focus();
+}
+
+function initializePracticeModeButtons() {
+    for (let mode_key of Object.keys(practice_modes)) {
+        let button = $(practice_modes[mode_key].button_id);
+        if (!button) continue;
+        button.addEventListener("click", () => applyPracticeMode(mode_key));
+        button.setAttribute("aria-pressed", "false");
+    }
+    updatePracticeModeButtons();
+}
+
 function setGroundMarkerPreset(preset) {
     ground_marker_preset = preset;
     localStorage.setItem(ground_marker_preset_storage_key, ground_marker_preset);
     let select = $("ground-marker-preset");
     if (select) select.value = ground_marker_preset;
+    updatePracticeModeButtons();
 }
 
 function updateGroundMarkerPreset() {
@@ -527,6 +599,7 @@ function updateGroundMarkerPreset() {
     }
     saveCustomTileMarkers();
     hideTileContextMenu();
+    updatePracticeModeButtons();
     draw();
     canvas.focus();
 }
@@ -2812,12 +2885,8 @@ function updateUnlimitedHp() {
 }
 
 function updateHmtAcidPools() {
-    hmt_acid_pools_enabled = $("hmt-acid-pools-enabled").checked;
-    localStorage.setItem(hmt_acid_pools_storage_key, hmt_acid_pools_enabled);
-    if (!hmt_acid_pools_enabled) {
-        poison_pools = [];
-        draw();
-    }
+    setHmtAcidPoolsEnabled($("hmt-acid-pools-enabled").checked);
+    draw();
 }
 
 function updateTrueTile() {
@@ -2857,6 +2926,7 @@ function initFormData() {
     $("ping-display").innerHTML = ping + " ms";
     $("volume-select").value = String(volume);
     $("volume-display").innerHTML = volume + "%";
+    updatePracticeModeButtons();
 }
 
 function reset() {
@@ -2901,6 +2971,7 @@ function reset() {
 function init() {
     click_x = new ClickX();
     initializeColorPresetMenu();
+    initializePracticeModeButtons();
     loadAcidHitSplatFont();
     
     initFormData();

@@ -173,6 +173,30 @@ input[type="range"] {
     filter: drop-shadow(0 8px 18px #000c);
 }
 
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto 10px;
+}
+
+.mode-selector button {
+    min-width: 150px;
+    padding: 9px 16px;
+    border-color: #584944;
+    background: #181513;
+    color: #f2efea;
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+
+.mode-selector button.active {
+    border-color: #d46455;
+    background: linear-gradient(180deg, #7d251e, #4b1714);
+    box-shadow: 0 0 0 1px #d4645580, 0 0 24px #a73b3270;
+    color: #fff6f2;
+}
+
 .flex-container {
     display: flex;
     justify-content: center;
