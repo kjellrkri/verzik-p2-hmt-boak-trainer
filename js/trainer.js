@@ -2049,24 +2049,44 @@ function getAngleDifference(startAngle, targetAngle) {
  *
  * Changes tile_size, tile_stroke, canvas.width, and canvas.height
  */
+function getAvailableBoardWidth() {
+    let viewport_width = document.documentElement && document.documentElement.clientWidth
+            ? document.documentElement.clientWidth
+            : window.innerWidth;
+    let wrapper = document.querySelector(".canvas-wrapper");
+
+    if (wrapper && window.getComputedStyle) {
+        let wrapper_style = getComputedStyle(wrapper);
+        viewport_width -= parseFloat(wrapper_style.paddingLeft) || 0;
+        viewport_width -= parseFloat(wrapper_style.paddingRight) || 0;
+    }
+
+    return Math.max(1, Math.min(tile_size_max * board_width, viewport_width - 2));
+}
+
 function resize() {
-    let viewport_width = .96 * window.innerWidth;
-    let canvas_top = canvas.getBoundingClientRect().top || 0;
+    let viewport_width = getAvailableBoardWidth();
+    let canvas_top = Math.max(0, canvas.getBoundingClientRect().top || 0);
     let controls = document.querySelector(".game-controls");
     let controls_height = controls ? controls.offsetHeight : 0;
-    let viewport_height = Math.max(
-            tile_size_max * 3,
+    let viewport_height = Math.max(1,
             window.innerHeight - canvas_top - controls_height - 14);
 
-    draw_scale = Math.min(
-            Math.min(1, viewport_width / (tile_size_max * board_width)),
-            Math.min(1, viewport_height / (tile_size_max * board_height)));
+    tile_size = Math.max(1, Math.min(
+            tile_size_max,
+            viewport_width / board_width,
+            viewport_height / board_height));
 
-    tile_size = tile_size_max * draw_scale;
+    canvas.width = Math.max(1, Math.floor(board_width * tile_size));
+    canvas.height = Math.max(1, Math.floor(board_height * tile_size));
+    tile_size = Math.min(canvas.width / board_width, canvas.height / board_height);
+    draw_scale = tile_size / tile_size_max;
     tile_stroke = tile_size / 25;
 
-    canvas.width = board_width * tile_size;
-    canvas.height = board_height * tile_size;
+    document.documentElement.style.setProperty(
+            "--trainer-layout-width",
+            `${canvas.width + 2}px`);
+
     clearScaledRenderCaches();
     markStaticLayerDirty();
     hideTileContextMenu();
