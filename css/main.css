@@ -642,15 +642,54 @@ input[type="range"] {
     gap: 8px;
 }
 
-@media (max-width: 1700px) {
+@media (max-width: 2350px) {
+    .flex-container {
+        display: grid;
+        grid-template-columns: minmax(0, 390px) minmax(0, 760px);
+        grid-template-areas:
+            "game game"
+            "options clips";
+        justify-content: center;
+        align-items: start;
+    }
+
+    .game-area {
+        grid-area: game;
+        justify-self: center;
+        max-width: 100%;
+    }
+
+    .form-box {
+        grid-area: options;
+        justify-self: end;
+        max-height: none;
+    }
+
     .example-clips {
-        order: 4;
+        grid-area: clips;
+        justify-self: start;
         width: min(100%, 760px);
         max-height: none;
     }
 
     .clip-list {
         grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 1220px) {
+    .flex-container {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "game"
+            "options"
+            "clips";
+    }
+
+    .form-box,
+    .example-clips {
+        justify-self: center;
+        width: min(100%, 720px);
     }
 }
 
